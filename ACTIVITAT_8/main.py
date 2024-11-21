@@ -3,7 +3,7 @@ from fastapi import FastAPI, HTTPException
 app = FastAPI()
 
 # Almacenamiento en memoria simulado
-users: [{"id":1,"nom": "Iris Vilaseca", "email": "iris@example.com", "edat": 26},
+users= [{"id":1,"nom": "Iris Vilaseca", "email": "iris@example.com", "edat": 26},
     {"id":2,"nom": "Natalia Casanellas", "email": "natalia@example.com", "edat": 33},
     {"id":3,"nom": "Roger Sobrino", "email": "roger@example.com", "edat": 45}]
 
@@ -22,7 +22,10 @@ async def create_user(nom: str, email: str, edat: int):
     users.append(new_user)
     return new_user
 
-
+# Read All - Obtener todos los usuarios
+@app.get("/users")
+async def get_users():
+    return users
 
 # Read - Obtener un usuario por ID
 @app.get("/users/{user_id}")
@@ -32,12 +35,6 @@ async def get_user(user_id: int):
             return user
     print("No existeix aquest usuari")
     return
-
-# Read All - Obtener todos los usuarios
-@app.get("/users")
-async def get_users():
-    return users
-
 
 # Update - Actualizar un usuario existente
 @app.put("/users/{user_id}")

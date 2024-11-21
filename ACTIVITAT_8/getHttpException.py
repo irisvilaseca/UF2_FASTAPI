@@ -3,7 +3,7 @@ from fastapi import FastAPI, HTTPException
 app = FastAPI()
 
 # Almacenamiento en memoria simulado
-users: [{"id":1,"nom": "Iris Vilaseca", "email": "iris@example.com", "edat": 26},
+users= [{"id":1,"nom": "Iris Vilaseca", "email": "iris@example.com", "edat": 26},
     {"id":2,"nom": "Natalia Casanellas", "email": "natalia@example.com", "edat": 33},
     {"id":3,"nom": "Roger Sobrino", "email": "roger@example.com", "edat": 45}]
 
