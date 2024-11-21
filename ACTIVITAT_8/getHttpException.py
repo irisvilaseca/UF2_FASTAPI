@@ -13,4 +13,4 @@ async def get_user(user_id: int):
     for user in users:
         if user["id"]==user_id:
             return user
-    return {"status": 404, "message": "Usuari no trobat"}
+raise HTTPException(status_code=404, detail="Usuari no trobat")
