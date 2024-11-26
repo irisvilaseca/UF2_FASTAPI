@@ -1,8 +1,8 @@
 from fastapi import FastAPI, HTTPException
-
+import json
 app = FastAPI()
 
-# Almacenamiento en memoria simulado
+# Emmagatzament en memòria
 users= [{"id":1,"nom": "Iris Vilaseca", "email": "iris@example.com", "edat": 26},
     {"id":2,"nom": "Natalia Casanellas", "email": "natalia@example.com", "edat": 33},
     {"id":3,"nom": "Roger Sobrino", "email": "roger@example.com", "edat": 45}]
@@ -10,24 +10,25 @@ users= [{"id":1,"nom": "Iris Vilaseca", "email": "iris@example.com", "edat": 26}
 
 @app.post("/users")
 async def create_user(nom: str, email: str, edat: int):
-    # Verificar si el email ya existe
+    # Verificar si l'email ja existeix
     for user in users:
         if user["email"]==email:
             print("No s'ha pogut crear l'usuari nou perquè el correu ja està registrat")
             return
 
-    # Crear un nuevo usuario
+    # Crear un nou usuari
     nou_id = len(users) + 1
     new_user = {"id": nou_id, "nom": nom, "email": email, "edat": edat}
     users.append(new_user)
     return new_user
 
-# Read All - Obtener todos los usuarios
+# Read All - Obtenir tots els usuarios
 @app.get("/users")
 async def get_users():
-    return users
+    json_object=json.dumps(users,indent=4)
+    return json_object
 
-# Read - Obtener un usuario por ID
+# Read - Obtenir un usuari per ID
 @app.get("/users/{user_id}")
 async def get_user(user_id: int):
     for user in users:
@@ -36,10 +37,10 @@ async def get_user(user_id: int):
     print("No existeix aquest usuari")
     return
 
-# Update - Actualizar un usuario existente
+# Update - Actualitzar un usuari existent
 @app.put("/users/{user_id}")
 async def update_user(user_id: int, nom: str, email: str = None, edat: int = None):
-    user = users.get(user_id)
+    user = get_user(user_id)
     if not user:
         print("No s'ha trobat cap usuari amb aquest id")
 
@@ -62,12 +63,17 @@ async def update_user(user_id: int, nom: str, email: str = None, edat: int = Non
             user["edat"]=edat
     return user
 
-# Delete - Eliminar un usuario por ID
-def delete_user(users, user_id):
-    for user in users:
-        if user["id"] == user_id:
-            users.remove(user)  # Eliminem l'usuari
-            return f"Usuario eliminado: {user}"
+# Delete - Eliminar un usuari per ID
+@app.delete("/users/{user_id}")
+async def delete_user(user_id: int):
+    # Filtrar fora la id que hem decidit
+    updated_users = [user for user in users if user["id"] != user_id]
 
-    # Si no trobem l'usuari, no esborrem res
-    return f"Error: No se encontró un usuario con ID {user_id}."
+    # Si la llista no s'ha actualitzat, vol dir que l'usuari no s'ha trobat
+    if len(updated_users) == len(users):
+        print("No s'ha trobat l'usuari")
+
+    # Actualitzem la llista original
+    users[:] = updated_users
+
+    return {"message": f"L'usuari amb ID {user_id} ha estat esborrat."}
