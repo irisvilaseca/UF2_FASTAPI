@@ -38,3 +38,11 @@ async def create_item(item: Item):
 async def update_item(item_id: int, item: Annotated[Item, Body(embed=True)]):
     results = {"item_id": item_id, "item": item}
     return results
+
+@app.delete("/items/{item_id}")
+async def delete_item(item_id: int):
+    if item_id in items_db:
+        deleted_item = items_db.pop(item_id)
+        return {"message": "Item deleted successfully", "item": deleted_item}
+    else:
+        raise HTTPException(status_code=404, detail="Item not found")
